@@ -19,7 +19,15 @@ export const toRN = (cssText) => {
   try {
     const output = toJSSObject(cssText);
     const result = Object.keys(output).map((rules) => [rules, output[rules]]);
-    return JSON.stringify(transform(result), null, 2);
+
+    const resultTransform = result
+      .map((e) => {
+        let properties = Object.keys(e[1]).map((rules) => [rules, e[1][rules]]);
+        return `${e[0]}: ${JSON.stringify(transform(properties), null, 2)}`;
+      })
+      .join(`,\n`);
+
+    return resultTransform;
   } catch (e) {
     return "Error translating CSS to RN";
   }
